@@ -4,8 +4,8 @@ listaX = ['a','b','c','d','e','f','g','h','i','j']
 listaY = [1,2,3,4,5,6,7,8,9]
 matriz = []
 matrizDeAjuda = []
+bloqColor = []
 posicBloq = []
-listaQuadrantes = []
 xPosicaoValor = -1
 yPosicaoValor = -1
 valor = 0
@@ -30,9 +30,14 @@ def lerAquivo():
 
 def bloqPosic():
     for i in range(9):
+        listaAjuda = []
         for c in range(9):
             if(matriz[i][c] != ' '):
+                listaAjuda.append(1)
                 posicBloq.append(listaX[i]+str(c+1))
+            else:
+                listaAjuda.append(0)
+        bloqColor.append(listaAjuda)
 
 def montarQuadrante():
     x = 3
@@ -103,7 +108,8 @@ def printarMatriz():
     print(str('\033[95m'+str(listaY[8])+'\033[0;0m'))
     print(a*3, end="")
     print(str(chr(9487)), end="")
-    print(str((chr(9473)+chr(9473)+chr(9473)+chr(9523)))*9)
+    print(str((chr(9473)+chr(9473)+chr(9473)+chr(9523)))*8, end="")
+    print(str(chr(9473)+chr(9473)+chr(9473)+chr(9491)))
     for c in range(9):
         print(str('\033[95m'+str(listaX[c])+'\033[0;0m') + a + a, end="")
         print(str(chr(9475)), end="")
@@ -112,21 +118,29 @@ def printarMatriz():
                 if(matrizDeAjuda[c][i] == 1): 
                     print(str(a+'\033[1;31m'+matriz[c][i]+'\033[0;0m'+a+chr(9475)))
                 else:
-                    print(str(a+matriz[c][i]+a+chr(9475)))
+                    if(bloqColor[c][i]):
+                        print(str(a+'\033[1;32m'+matriz[c][i]+'\033[0;0m'+a+chr(9475)))
+                    else:
+                        print(str(a+matriz[c][i]+a+chr(9475)))
             else: 
                 if(matrizDeAjuda[c][i] == 1):
                     print(str(a+'\033[1;31m'+matriz[c][i]+'\033[0;0m'+a+chr(9475)), end="")
                 else:
-                    print(str(a+matriz[c][i]+a+chr(9475)), end="")
+                    if(bloqColor[c][i]):
+                        print(str(a+'\033[1;32m'+matriz[c][i]+'\033[0;0m'+a+chr(9475)), end="")
+                    else:    
+                        print(str(a+matriz[c][i]+a+chr(9475)), end="")
         if(c == 8):
             break
         else:
             print(a*3, end="")
             print(str(chr(9507)), end="")
-            print(str(chr(9473)+chr(9473)+chr(9473)+chr(9547))*9)
+            print(str(chr(9473)+chr(9473)+chr(9473)+chr(9547))*8, end="")
+            print(str(chr(9473)+chr(9473)+chr(9473)+chr(9515)))
     print(a*3, end="")
     print(str(chr(9495)), end="") 
-    print(str(chr(9473)+chr(9473)+chr(9473)+chr(9499))*9)
+    print(str(chr(9473)+chr(9473)+chr(9473)+chr(9531))*8, end="")
+    print(str(chr(9473)+chr(9473)+chr(9473)+chr(9499)))
     
 def verificarMatriz():
     for i in range(9):
@@ -175,13 +189,10 @@ def inputarDados():
         printarMatriz()
  
 print(inputarDados())
+# def printar():
+#     for i in range(10000):
+#         print( i ,chr(i))
 
-
-# lerAquivo()
+# print(printar())
 # montarQuadrante()
 # # print(validarQuadrante())
-
-
-
-
-
