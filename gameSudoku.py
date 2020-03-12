@@ -105,7 +105,7 @@ def printarMatriz():
     print(str(chr(9487)), end="")
     print(str((chr(9473)+chr(9473)+chr(9473)+chr(9523)))*9)
     for c in range(9):
-        print(listaX[c] + a + a, end="")
+        print(str('\033[95m'+str(listaX[c])+'\033[0;0m') + a + a, end="")
         print(str(chr(9475)), end="")
         for i in range(9):
             if(i == 8):
@@ -169,9 +169,9 @@ def inputarDados():
                                 print('GANHOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOUUUUUUUUUUUU')
                                 break
                         else:
-                            print('Número deve ser entre 1 e 9')
+                            print('\033[31m'+'Número deve ser de 1 a 9'+'\033[0;0m')
                             break                   
-        # os.system('cls')    
+        os.system('cls')    
         printarMatriz()
  
 print(inputarDados())
