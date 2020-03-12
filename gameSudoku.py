@@ -11,10 +11,11 @@ yPosicaoValor = -1
 valor = 0
 condicao = False
 ganhou = False
+ganhouMesmo = False
 
     
 
-f = open("demofile.txt", "r")
+f = open("config-teste.txt", "r")
 texto = f.readlines()
 def lerAquivo():
     for i in range(len(texto)):
@@ -89,16 +90,19 @@ def validarErro():
     global ganhou
     for i in matrizDeAjuda:
         if(1 in i):
-            return True
+            ganhou = True
+    return ganhou
 
 def validarFinalDeJogo():
+    global ganhouMesmo
     if(validarErro() == False):
         for i in range(9):
             for c in range(9):
                 if(matriz[i][c] != ' '):
-                    pass
+                    ganhouMesmo = True
                 else:
-                    return False
+                    ganhouMesmo = False
+        return ganhouMesmo
 
 def printarMatriz():
     a = ' '
@@ -181,11 +185,10 @@ def inputarDados():
                             matriz[i][c] = valor
                             if(validarFinalDeJogo()):
                                 print('GANHOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOUUUUUUUUUUUU')
-                                break
+                                # break
                         else:
                             print('\033[31m'+'Número deve ser de 1 a 9'+'\033[0;0m')
-                            break                   
-        os.system('cls')    
+                            break                    
         printarMatriz()
  
 print(inputarDados())
