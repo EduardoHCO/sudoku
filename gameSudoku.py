@@ -6,6 +6,13 @@ matriz = []
 matrizDeAjuda = []
 posicBloq = []
 listaQuadrantes = []
+xPosicaoValor = -1
+yPosicaoValor = -1
+valor = 0
+condicao = False
+ganhou = False
+
+    
 
 f = open("demofile.txt", "r")
 texto = f.readlines()
@@ -27,19 +34,27 @@ def bloqPosic():
             if(matriz[i][c] != ' '):
                 posicBloq.append(listaX[i]+str(c+1))
 
-def validarQuadrante():
+def montarQuadrante():
     x = 3
     y = 3
     ii = 0
     jj = 0
+    global xPosicaoValor
+    global yPosicaoValor
+    global condicao
 
     for n in range(3):
         for c in range(3):
-            quadrante = []
             for i in range(ii, x):
                 for j in range(jj, y):
-                    quadrante.append(matriz[i][j])
-            listaQuadrantes.append(quadrante)
+                    if(xPosicaoValor == i and yPosicaoValor == j):
+                        for p in range(ii, x):
+                            for q in range(jj, y):
+                                if(str(valor) == matriz[p][q]):
+                                    matrizDeAjuda[p][q] = 1
+                                    condicao = True
+                                else:
+                                    matrizDeAjuda[p][q] = 0
             ii += 3
             x += 3
         y += 3
@@ -47,6 +62,7 @@ def validarQuadrante():
         ii = 0
         x = 3
     
+
 
 def validarLinha(linha, coluna, valor):
     for i in range(coluna):
@@ -64,9 +80,20 @@ def validarColuna(linha, coluna, valor):
         else:
             matrizDeAjuda[i][coluna] = 0
 
-# def validarQuadrante(linha, coluna):
-    
-    
+def validarErro():
+    global ganhou
+    for i in matrizDeAjuda:
+        if(1 in i):
+            return True
+
+def validarFinalDeJogo():
+    if(validarErro() == False):
+        for i in range(9):
+            for c in range(9):
+                if(matriz[i][c] != ' '):
+                    pass
+                else:
+                    return False
 
 def printarMatriz():
     a = ' '
@@ -83,12 +110,12 @@ def printarMatriz():
         for i in range(9):
             if(i == 8):
                 if(matrizDeAjuda[c][i] == 1): 
-                    print(str(a+'\033[31m'+matriz[c][i]+'\033[0;0m'+a+chr(9475)))
+                    print(str(a+'\033[1;31m'+matriz[c][i]+'\033[0;0m'+a+chr(9475)))
                 else:
                     print(str(a+matriz[c][i]+a+chr(9475)))
             else: 
                 if(matrizDeAjuda[c][i] == 1):
-                    print(str(a+'\033[31m'+matriz[c][i]+'\033[0;0m'+a+chr(9475)), end="")
+                    print(str(a+'\033[1;31m'+matriz[c][i]+'\033[0;0m'+a+chr(9475)), end="")
                 else:
                     print(str(a+matriz[c][i]+a+chr(9475)), end="")
         if(c == 8):
@@ -112,6 +139,8 @@ def inputarDados():
     printarMatriz()
     global xPosicaoValor
     global yPosicaoValor
+    global valor
+    global condicao
     while(verificarMatriz() == False):
         print('Escolha uma posição válida: ')
         ent = input()
@@ -125,15 +154,20 @@ def inputarDados():
                         print('Insira um número de 1 a 9: ')
                         valor = input()
                         if(int(valor) <= 9 and int(valor) >= 1):
-                            validarLinha(i,9,valor)
-                            validarColuna(9,c,valor)
-                            if(validarLinha(i,9,valor) or validarColuna(9,c,valor)):
-                                matrizDeAjuda[i][c] = 1
                             xPosicaoValor = i
                             yPosicaoValor = c
+                            validarLinha(i,9,valor)
+                            validarColuna(9,c,valor)
+                            montarQuadrante()
+                            if(validarLinha(i,9,valor) or validarColuna(9,c,valor)):
+                                matrizDeAjuda[i][c] = 1
+                            if(condicao):
+                                matrizDeAjuda[i][c] = 1
+                                condicao = False
                             matriz[i][c] = valor
-                            print(matrizDeAjuda)
-                            
+                            if(validarFinalDeJogo()):
+                                print('GANHOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOUUUUUUUUUUUU')
+                                break
                         else:
                             print('Número deve ser entre 1 e 9')
                             break                   
@@ -141,6 +175,13 @@ def inputarDados():
         printarMatriz()
  
 print(inputarDados())
+
+
+# lerAquivo()
+# montarQuadrante()
+# # print(validarQuadrante())
+
+
 
 
 
