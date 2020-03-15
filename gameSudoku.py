@@ -14,9 +14,24 @@ condicao = False
 ganhou = False
 ganhouMesmo = False
 
-
-f = open("config-teste.txt", "r")
-texto = f.readlines()
+print('Qual nível deseja jogar?')
+print(' ')
+print('1 - Fácil')
+print('2 - Intermediário')
+print('3 - Difícil')
+nivel = input()
+if(int(nivel) == 1):
+    f = open("nivel1.txt", "r")
+    texto = f.readlines()
+elif(int(nivel) == 2):
+    f = open("nivel2.txt", "r")
+    texto = f.readlines()
+elif(int(nivel) == 3):
+    f = open("nivel3.txt", "r")
+    texto = f.readlines()
+else:
+    f = open("nivel1.txt", "r")
+    texto = f.readlines()
 
 
 def lerAquivo():
