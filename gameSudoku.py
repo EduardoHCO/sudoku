@@ -1,7 +1,8 @@
 import os
+from PIL import Image
 
-listaX = ['a','b','c','d','e','f','g','h','i','j']
-listaY = [1,2,3,4,5,6,7,8,9]
+listaX = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
+listaY = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 matriz = []
 matrizDeAjuda = []
 bloqColor = []
@@ -13,10 +14,11 @@ condicao = False
 ganhou = False
 ganhouMesmo = False
 
-    
 
 f = open("config-teste.txt", "r")
 texto = f.readlines()
+
+
 def lerAquivo():
     for i in range(len(texto)):
         lista = []
@@ -29,6 +31,7 @@ def lerAquivo():
         matrizDeAjuda.append(listaAjuda)
     bloqPosic()
 
+
 def bloqPosic():
     for i in range(9):
         listaAjuda = []
@@ -39,6 +42,7 @@ def bloqPosic():
             else:
                 listaAjuda.append(0)
         bloqColor.append(listaAjuda)
+
 
 def montarQuadrante():
     x = 3
@@ -67,7 +71,6 @@ def montarQuadrante():
         jj += 3
         ii = 0
         x = 3
-    
 
 
 def validarLinha(linha, coluna, valor):
@@ -78,6 +81,7 @@ def validarLinha(linha, coluna, valor):
         else:
             matrizDeAjuda[linha][i] = 0
 
+
 def validarColuna(linha, coluna, valor):
     for i in range(linha):
         if(matriz[i][coluna] == str(valor)):
@@ -86,12 +90,14 @@ def validarColuna(linha, coluna, valor):
         else:
             matrizDeAjuda[i][coluna] = 0
 
+
 def validarErro():
     global ganhou
     for i in matrizDeAjuda:
         if(1 in i):
             ganhou = True
     return ganhou
+
 
 def validarFinalDeJogo():
     global ganhouMesmo
@@ -103,6 +109,7 @@ def validarFinalDeJogo():
                 else:
                     ganhouMesmo = False
         return ganhouMesmo
+
 
 def printarMatriz():
     a = ' '
@@ -119,20 +126,24 @@ def printarMatriz():
         print(str(chr(9475)), end="")
         for i in range(9):
             if(i == 8):
-                if(matrizDeAjuda[c][i] == 1): 
-                    print(str(a+'\033[1;31m'+matriz[c][i]+'\033[0;0m'+a+chr(9475)))
+                if(matrizDeAjuda[c][i] == 1):
+                    print(str(a+'\033[1;31m'+matriz[c]
+                              [i]+'\033[0;0m'+a+chr(9475)))
                 else:
                     if(bloqColor[c][i]):
-                        print(str(a+'\033[1;32m'+matriz[c][i]+'\033[0;0m'+a+chr(9475)))
+                        print(str(a+'\033[1;32m'+matriz[c]
+                                  [i]+'\033[0;0m'+a+chr(9475)))
                     else:
                         print(str(a+matriz[c][i]+a+chr(9475)))
-            else: 
+            else:
                 if(matrizDeAjuda[c][i] == 1):
-                    print(str(a+'\033[1;31m'+matriz[c][i]+'\033[0;0m'+a+chr(9475)), end="")
+                    print(str(a+'\033[1;31m'+matriz[c][i] +
+                              '\033[0;0m'+a+chr(9475)), end="")
                 else:
                     if(bloqColor[c][i]):
-                        print(str(a+'\033[1;32m'+matriz[c][i]+'\033[0;0m'+a+chr(9475)), end="")
-                    else:    
+                        print(str(a+'\033[1;32m'+matriz[c]
+                                  [i]+'\033[0;0m'+a+chr(9475)), end="")
+                    else:
                         print(str(a+matriz[c][i]+a+chr(9475)), end="")
         if(c == 8):
             break
@@ -142,15 +153,17 @@ def printarMatriz():
             print(str(chr(9473)+chr(9473)+chr(9473)+chr(9547))*8, end="")
             print(str(chr(9473)+chr(9473)+chr(9473)+chr(9515)))
     print(a*3, end="")
-    print(str(chr(9495)), end="") 
+    print(str(chr(9495)), end="")
     print(str(chr(9473)+chr(9473)+chr(9473)+chr(9531))*8, end="")
     print(str(chr(9473)+chr(9473)+chr(9473)+chr(9499)))
-    
+
+
 def verificarMatriz():
     for i in range(9):
         for c in range(9):
             if(matriz[i][c] == ' '):
                 return False
+
 
 def inputarDados():
     lerAquivo()
@@ -159,13 +172,15 @@ def inputarDados():
     global yPosicaoValor
     global valor
     global condicao
+    finaliza = False
     while(verificarMatriz() == False):
         print('Escolha uma posição válida: ')
         ent = input()
         for i in range(9):
             for c in range(9):
                 if(ent in posicBloq):
-                    print('\033[31m'+'Posição escolhida não pode ser Mudada'+'\033[0;0m')
+                    print(
+                        '\033[31m'+'Posição escolhida não pode ser Mudada'+'\033[0;0m')
                     break
                 else:
                     if(ent == listaX[i]+str(listaY[c])):
@@ -174,28 +189,35 @@ def inputarDados():
                         if(int(valor) <= 9 and int(valor) >= 1):
                             xPosicaoValor = i
                             yPosicaoValor = c
-                            validarLinha(i,9,valor)
-                            validarColuna(9,c,valor)
+                            validarLinha(i, 9, valor)
+                            validarColuna(9, c, valor)
                             montarQuadrante()
-                            if(validarLinha(i,9,valor) or validarColuna(9,c,valor)):
+                            if(validarLinha(i, 9, valor) or validarColuna(9, c, valor)):
                                 matrizDeAjuda[i][c] = 1
                             if(condicao):
                                 matrizDeAjuda[i][c] = 1
                                 condicao = False
                             matriz[i][c] = valor
                             if(validarFinalDeJogo()):
-                                print('GANHOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOUUUUUUUUUUUU')
-                                # break
-                        else:
-                            print('\033[31m'+'Número deve ser de 1 a 9'+'\033[0;0m')
-                            break                    
-        printarMatriz()
- 
-print(inputarDados())
-# def printar():
-#     for i in range(10000):
-#         print( i ,chr(i))
+                                os.system('cls')
+                                f = open("YES.txt", "r")
+                                texto = f.readlines()
+                                for i in range(len(texto)):
+                                    print(texto[i])
+                                finaliza = True
+                                break
 
-# print(printar())
-# montarQuadrante()
-# # print(validarQuadrante())
+                        else:
+                            print('\033[31m' +
+                                  'Número deve ser de 1 a 9'+'\033[0;0m')
+                            break
+                if(finaliza):
+                    break
+            if(finaliza):
+                break
+        if(finaliza):
+            break
+        printarMatriz()
+
+
+print(inputarDados())
