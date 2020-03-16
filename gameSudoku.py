@@ -93,8 +93,6 @@ def validarLinha(linha, coluna, valor):
         if(matriz[linha][i] == str(valor)):
             matrizDeAjuda[linha][i] = 1
             return True
-        else:
-            matrizDeAjuda[linha][i] = 0
 
 
 def validarColuna(linha, coluna, valor):
@@ -102,8 +100,6 @@ def validarColuna(linha, coluna, valor):
         if(matriz[i][coluna] == str(valor)):
             matrizDeAjuda[i][coluna] = 1
             return True
-        else:
-            matrizDeAjuda[i][coluna] = 0
 
 
 def validarErro():
