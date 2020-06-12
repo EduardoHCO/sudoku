@@ -88,6 +88,30 @@ def montarQuadrante():
         x = 3
 
 
+def validarQuadrante(matriz, linha, coluna, valor):
+    auxLinha = 0
+    auxColuna = 0
+    if linha < 3:
+        auxLinha = 0
+    else:
+        if linha < 6:
+            auxLinha = 3
+        else:
+            auxLinha = 6
+    if coluna < 3:
+        auxColuna = 0
+    else:
+        if coluna < 6:
+            auxColuna = 3
+        else:
+            auxColuna = 6
+    for i in range(3):
+        for j in range(3):
+            if matriz[i+auxLinha][j+auxColuna] == valor:
+                matrizDeAjuda[i+auxLinha][j+auxColuna] == 1
+                return True
+
+
 def validarLinha(linha, coluna, valor):
     for i in range(coluna):
         if(matriz[linha][i] == str(valor)):
@@ -202,8 +226,7 @@ def inputarDados():
                             yPosicaoValor = c
                             validarLinha(i, 9, valor)
                             validarColuna(9, c, valor)
-                            montarQuadrante()
-                            if(validarLinha(i, 9, valor) or validarColuna(9, c, valor)):
+                            if(validarQuadrante(matriz, i, c, valor) or validarLinha(i, 9, valor) or validarColuna(9, c, valor)):
                                 matrizDeAjuda[i][c] = 1
                             if(condicao):
                                 matrizDeAjuda[i][c] = 1
