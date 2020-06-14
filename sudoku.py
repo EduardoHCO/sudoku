@@ -54,19 +54,20 @@ def printar_matriz():
 
 
 def preencher_matriz():
+    lerAquivo()
     for i in range(9):
         for j in range(9):
             if matriz[i][j] == " ":
                 aleatorio = random.randint(1, 9)
                 matriz[i][j] = str(aleatorio)
-                numeros_gerados = aleatorio
-    printar_matriz()
+    return matriz
 
 
 def avaliacao(estado):
     somatoria = 0
     for i in range(9):
         somatoria += validar_linha(i, estado) + validar_coluna(i, estado)
+    somatoria += validarQuadrante(estado)
     return somatoria
 
 
@@ -93,14 +94,55 @@ def validar_coluna(coluna, estado):
     return conflitos
 
 
-# def validar_quadrante(estado, quadrante):
-#     for i in range(3):
-#         for j in range(3):
-#             if estado[]
+def validarDiagonais(matriz, i, j):
+    auxi = 0
+    auxj = 0
+    if i < 3:
+        auxi = 0
+    else:
+        if i < 6:
+            auxi = 3
+        else:
+            auxi = 6
+    if j < 3:
+        auxj = 0
+    else:
+        if j < 6:
+            auxj = 3
+        else:
+            auxj = 6
+    contador = 0
+    print('j: ' + str(j))
+    for k in range(3):
+        for l in range(3):
+            if(k+auxi != i and l+auxj != j):
+                if matriz[i][j] == matriz[k+auxi][l+auxj]:
+                    print('Numero para comparar: ' + str(
+                        matriz[i][j]) + ' posicao número encontrado: ' + str(k+auxi), str(l+auxj))
+                    contador += 1
+    return contador
 
 
-lerAquivo()
-printar_matriz()
-fixar_valores()
-preencher_matriz()
-print(avaliacao(matriz))
+def validarQuadrante(matriz):
+    print(printar_matriz())
+    contador = 0
+    for n in range(0, 9, 3):
+        for m in range(0, 9, 3):
+            for i in range(n, n+3):
+                contQuadrante = 0
+                for j in range(m, m+3):
+                    print('J ****:' + str(j))
+                    contQuadrante += validarDiagonais(matriz, i, j)
+                    print('CONTADOR ------- : ' + str(contQuadrante))
+                contador += (contQuadrante/2)
+            print('QUANTO DEU O QUADRANTE: ' + str(contador))
+    return int(contador)
+
+
+# lerAquivo()
+# printar_matriz()
+# fixar_valores()
+# preencher_matriz()
+# print(avaliacao(matriz))
+
+print(validarQuadrante(preencher_matriz()))
