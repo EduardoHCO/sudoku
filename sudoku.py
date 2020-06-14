@@ -1,4 +1,60 @@
 import random
+
+
+class ProblemaSudoku():
+
+    def __init__(self, s):
+        self.inicial = s
+        self.valores_fixos = []
+
+    def acoes(self, s):
+        acoes_possiveis = []
+
+        for i in range(9):
+            for j in range(9):
+                if (i, j) not in self.valores_fixos:
+                    acoes_possiveis.append((i, j))
+        return acoes_possiveis
+
+    @staticmethod
+    def resultado(s, a):
+        pos, mov = a
+        aleatorio = random.randint(1, 9)
+
+        while s[pos][mov] == str(aleatorio):
+            aleatorio = random.randint(1, 9)
+
+        s[pos][mov] = str(aleatorio)
+
+        return s
+
+        # return [rainha + (0 if pos != id else mov)
+        #         for id, rainha in enumerate(s)]
+
+    @staticmethod
+    def objetivo(s):
+        if avaliacao(s) == 0:
+            return True
+
+    @staticmethod
+    def custo(s, a, sl):
+        return 1
+
+    @classmethod
+    def heuristica(cls, no):
+        return cls.avaliacao(no.s)
+
+    @staticmethod
+    def avaliacao(s):
+        return avaliacao(s)
+
+    def fixar_valores(self, s):
+        for i in range(9):
+            for j in range(9):
+                if matriz[i][j] != " ":
+                    self.valores_fixos.append((i, j))
+
+
 print('Qual nível deseja jogar?')
 print(' ')
 print('1 - Fácil')
@@ -20,7 +76,6 @@ else:
 
 matriz = []
 numeros_gerados = []
-valores_fixos = []
 
 
 def lerAquivo():
@@ -32,17 +87,10 @@ def lerAquivo():
             listaAjuda.append(0)
         # print(lista)
         matriz.append(lista)
+    return matriz
 
 
-def fixar_valores():
-    for i in range(9):
-        for j in range(9):
-            if matriz[i][j] != " ":
-                valores_fixos.append([matriz[i][j], i, j])
-    print(valores_fixos)
-
-
-def printar_matriz():
+def printar_matriz(matriz):
     for i in range(9):
         for j in range(9):
             if j == 0:
@@ -54,7 +102,6 @@ def printar_matriz():
 
 
 def preencher_matriz():
-    lerAquivo()
     for i in range(9):
         for j in range(9):
             if matriz[i][j] == " ":
@@ -112,37 +159,78 @@ def validarDiagonais(matriz, i, j):
         else:
             auxj = 6
     contador = 0
-    print('j: ' + str(j))
     for k in range(3):
         for l in range(3):
             if(k+auxi != i and l+auxj != j):
                 if matriz[i][j] == matriz[k+auxi][l+auxj]:
-                    print('Numero para comparar: ' + str(
-                        matriz[i][j]) + ' posicao número encontrado: ' + str(k+auxi), str(l+auxj))
                     contador += 1
     return contador
 
 
 def validarQuadrante(matriz):
-    print(printar_matriz())
     contador = 0
     for n in range(0, 9, 3):
         for m in range(0, 9, 3):
             for i in range(n, n+3):
                 contQuadrante = 0
                 for j in range(m, m+3):
-                    print('J ****:' + str(j))
                     contQuadrante += validarDiagonais(matriz, i, j)
-                    print('CONTADOR ------- : ' + str(contQuadrante))
                 contador += (contQuadrante/2)
-            print('QUANTO DEU O QUADRANTE: ' + str(contador))
     return int(contador)
 
 
-# lerAquivo()
-# printar_matriz()
-# fixar_valores()
-# preencher_matriz()
-# print(avaliacao(matriz))
+def subida_encosta(problema):
+    ''' s é o estado inicial, problema é o gerador e avaliacao é uma funcao
+    de avaliação, onde avaliacao(s) == 0 é a solução ótima. Sempre retorna uma
+    solução, mas não é ótimo.
+    '''
+    melhor = problema.inicial
+    while True:
+        vizinhos = (problema.resultado(melhor, acao)
+                    for acao in problema.acoes(melhor))
+        melhor_vizinho = min(vizinhos, key=problema.avaliacao)
+        if problema.avaliacao(melhor_vizinho) < problema.avaliacao(melhor):
+            melhor = melhor_vizinho
+        else:
+            return melhor
 
-print(validarQuadrante(preencher_matriz()))
+
+def subida_encosta_repeticoes(problema, estados, limite):
+    problema_sudoku = ProblemaSudoku(lerAquivo())
+    problema_sudoku.fixar_valores(problema_sudoku.inicial)
+    problema_sudoku.inicial = preencher_matriz()
+    for estado in estados:
+        problema.inicial = estado
+        resultado = subida_encosta(problema)
+        if problema.avaliacao(resultado) <= limite:
+            return resultado
+
+    raise LimiteNaoAtingidoError()
+
+
+class LimiteNaoAtingidoError(Exception):
+    pass
+
+
+if __name__ == "__main__":
+    problema_sudoku = ProblemaSudoku(lerAquivo())
+    problema_sudoku.fixar_valores(problema_sudoku.inicial)
+    problema_sudoku.inicial = preencher_matriz()
+    # sol = subida_encosta(problema_sudoku)
+    # print(printar_matriz(sol), problema_sudoku.avaliacao(sol))
+
+    # Subida de encosta com reinicios, não deterministico por causa da função
+    # geradora de estados iniciais
+    try:
+        sol = subida_encosta_repeticoes(
+            ProblemaRainhas([None]*8),
+            estados_gen(8, 8, 'r'),
+            0)
+        print(sol, ataques_rainhas(sol))
+    except:
+        pass
+
+    # sol = feixe_local(
+    #     ProblemaRainhas([None]*8),
+    #     estados_gen(8, 8, 'r'))
+    # print(sol, ataques_rainhas(sol))

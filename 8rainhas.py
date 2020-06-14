@@ -13,6 +13,7 @@ class ProblemaRainhas():
     @staticmethod
     def resultado(s, a):
         pos, mov = a
+
         return [rainha + (0 if pos != id else mov)
                 for id, rainha in enumerate(s)]
 
@@ -59,6 +60,7 @@ def subida_encosta(problema):
     solução, mas não é ótimo.
     '''
     melhor = problema.inicial
+
     while True:
         vizinhos = (problema.resultado(melhor, acao)
                     for acao in problema.acoes(melhor))
