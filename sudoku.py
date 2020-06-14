@@ -195,15 +195,20 @@ def subida_encosta(problema):
             return melhor
 
 
-def subida_encosta_repeticoes(problema, estados, limite):
-    problema_sudoku = ProblemaSudoku(lerAquivo())
-    problema_sudoku.fixar_valores(problema_sudoku.inicial)
-    problema_sudoku.inicial = preencher_matriz()
-    for estado in estados:
-        problema.inicial = estado
-        resultado = subida_encosta(problema)
-        if problema.avaliacao(resultado) <= limite:
+def subida_encosta_repeticoes(quantidade, limite):
+    for _ in range(quantidade):
+        problema_sudoku = ProblemaSudoku(lerAquivo())
+        problema_sudoku.fixar_valores(problema_sudoku.inicial)
+        problema_sudoku.inicial = preencher_matriz()
+        resultado = subida_encosta(problema_sudoku)
+        if problema_sudoku.avaliacao(resultado) <= limite:
             return resultado
+
+    # for estado in estados:
+    #     problema.inicial = estado
+    #     resultado = subida_encosta(problema)
+    #     if problema.avaliacao(resultado) <= limite:
+    #         return resultado
 
     raise LimiteNaoAtingidoError()
 
@@ -213,19 +218,16 @@ class LimiteNaoAtingidoError(Exception):
 
 
 if __name__ == "__main__":
-    problema_sudoku = ProblemaSudoku(lerAquivo())
-    problema_sudoku.fixar_valores(problema_sudoku.inicial)
-    problema_sudoku.inicial = preencher_matriz()
+    # problema_sudoku = ProblemaSudoku(lerAquivo())
+    # problema_sudoku.fixar_valores(problema_sudoku.inicial)
+    # problema_sudoku.inicial = preencher_matriz()
     # sol = subida_encosta(problema_sudoku)
     # print(printar_matriz(sol), problema_sudoku.avaliacao(sol))
 
     # Subida de encosta com reinicios, não deterministico por causa da função
     # geradora de estados iniciais
     try:
-        sol = subida_encosta_repeticoes(
-            ProblemaRainhas([None]*8),
-            estados_gen(8, 8, 'r'),
-            0)
+        sol = subida_encosta_repeticoes(4, 0)
         print(sol, ataques_rainhas(sol))
     except:
         pass
