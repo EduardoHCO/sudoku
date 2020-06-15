@@ -90,7 +90,11 @@ class LimiteNaoAtingidoError(Exception):
 def feixe_local(problema, estados_iniciais):
     avaliacao = problema.avaliacao  # alias
 
+    for i in estados_iniciais:
+        print(i)
+
     melhores_estados = sorted(estados_iniciais, key=avaliacao)
+
     k = len(melhores_estados)
     while True:
         vizinhos = [problema.resultado(estado, acao)
@@ -105,21 +109,21 @@ def feixe_local(problema, estados_iniciais):
 
 if __name__ == "__main__":
     # Subida de encosta simples, para um único caso, determinístico
-    sol = subida_encosta(ProblemaRainhas([2, 3, 1, 4, 8, 6, 5, 7]))
-    print(sol, ataques_rainhas(sol))
+    # sol = subida_encosta(ProblemaRainhas([2, 3, 1, 4, 8, 6, 5, 7]))
+    # print(sol, ataques_rainhas(sol))
 
     # Subida de encosta com reinicios, não deterministico por causa da função
     # geradora de estados iniciais
-    try:
-        sol = subida_encosta_repeticoes(
-            ProblemaRainhas([None]*8),
-            estados_gen(8, 8, 'r'),
-            0)
-        print(sol, ataques_rainhas(sol))
-    except:
-        pass
+    # try:
+    #     sol = subida_encosta_repeticoes(
+    #         ProblemaRainhas([None]*8),
+    #         estados_gen(8, 8, 'r'),
+    #         0)
+    #     print(sol, ataques_rainhas(sol))
+    # except:
+    #     pass
 
-    # sol = feixe_local(
-    #     ProblemaRainhas([None]*8),
-    #     estados_gen(8, 8, 'r'))
-    # print(sol, ataques_rainhas(sol))
+    sol = feixe_local(
+        ProblemaRainhas([None]*8),
+        estados_gen(8, 8, 'r'))
+    print(sol, ataques_rainhas(sol))

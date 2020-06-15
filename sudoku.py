@@ -51,34 +51,45 @@ class ProblemaSudoku():
     def fixar_valores(self, s):
         for i in range(9):
             for j in range(9):
-                if matriz[i][j] != " ":
+                if s[i][j] != " ":
                     self.valores_fixos.append((i, j))
 
 
-print('Qual nível deseja jogar?')
-print(' ')
-print('1 - Fácil')
-print('2 - Intermediário')
-print('3 - Difícil')
-nivel = input()
-if(int(nivel) == 1):
+def questionador():
+    print('Qual nível deseja jogar?')
+    print('1 - Fácil')
+    print('2 - Intermediário')
+    print('3 - Difícil')
+    nivel = input()
+
+    return nivel
+
+
+def escolher_jogador():
+    print('Quem vai jogar?')
+    print('1 - Humano')
+    print('2 - Agente Inteligente')
+    jogador = input()
+
+    return jogador
+
+
+if(int(questionador()) == 1):
     f = open("nivel1.txt", "r")
     texto = f.readlines()
-elif(int(nivel) == 2):
+elif(int(questionador()) == 2):
     f = open("nivel2.txt", "r")
     texto = f.readlines()
-elif(int(nivel) == 3):
+elif(int(questionador()) == 3):
     f = open("nivel3.txt", "r")
     texto = f.readlines()
 else:
     f = open("nivel1.txt", "r")
     texto = f.readlines()
 
-matriz = []
-numeros_gerados = []
-
 
 def lerAquivo():
+    matriz = []
     for i in range(len(texto)):
         lista = []
         listaAjuda = []
@@ -101,7 +112,7 @@ def printar_matriz(matriz):
                 print(" " + matriz[i][j], end="")
 
 
-def preencher_matriz():
+def preencher_matriz(matriz):
     for i in range(9):
         for j in range(9):
             if matriz[i][j] == " ":
@@ -199,7 +210,7 @@ def subida_encosta_repeticoes(quantidade, limite):
     for _ in range(quantidade):
         problema_sudoku = ProblemaSudoku(lerAquivo())
         problema_sudoku.fixar_valores(problema_sudoku.inicial)
-        problema_sudoku.inicial = preencher_matriz()
+        problema_sudoku.inicial = preencher_matriz(problema_sudoku.inicial)
         resultado = subida_encosta(problema_sudoku)
         if problema_sudoku.avaliacao(resultado) <= limite:
             return resultado
@@ -217,7 +228,62 @@ class LimiteNaoAtingidoError(Exception):
     pass
 
 
+def estados_gen(dim, qtde_estados, seed=None):
+    import random
+    random.seed(seed)
+
+    for _ in range(qtde_estados):
+        tabuleiro = list(range(1, dim+1))
+        random.shuffle(tabuleiro)
+        yield tabuleiro
+
+
+def feixe_local(quantidade, k):
+    estados_iniciais = []
+
+    for _ in range(quantidade):
+        problema_sudoku = ProblemaSudoku(lerAquivo())
+        problema_sudoku.fixar_valores(problema_sudoku.inicial)
+        problema_sudoku.inicial = preencher_matriz(problema_sudoku.inicial)
+        estados_iniciais.append(problema_sudoku.inicial)
+
+    avaliacao = problema_sudoku.avaliacao  # alias
+
+    melhores_estados = sorted(estados_iniciais, key=avaliacao)
+
+    while True:
+        vizinhos = [problema_sudoku.resultado(estado, acao)
+                    for estado in melhores_estados
+                    for acao in problema_sudoku.acoes(estado)]
+        vizinhos.sort(key=problema_sudoku.avaliacao)
+        if avaliacao(vizinhos[0]) < avaliacao(melhores_estados[0]):
+            melhores_estados = vizinhos[:k]
+        else:
+            return melhores_estados[0]
+
+
+def busca_local_retrocesso(problema):
+    estado = problema.inicial
+    aux = estado
+    # for i in range(9):
+    #     for j in range(9):
+    #         if estado[i][j] == " ":
+    #             for k in range(1, 10):
+    #                 aux[i][j] = k
+    #                 print(avaliacao(aux))
+    #                 if avaliacao(aux) != 0:
+    #                     aux[i][j] = " "
+    #                     busca_local_retrocesso(problema)
+    #                 else:
+    #                     pass
+    return estado
+
+    if avaliacao(estado) != 0:
+        busca_local_retrocesso(estado)
+
+
 if __name__ == "__main__":
+
     # problema_sudoku = ProblemaSudoku(lerAquivo())
     # problema_sudoku.fixar_valores(problema_sudoku.inicial)
     # problema_sudoku.inicial = preencher_matriz()
@@ -226,13 +292,13 @@ if __name__ == "__main__":
 
     # Subida de encosta com reinicios, não deterministico por causa da função
     # geradora de estados iniciais
-    try:
-        sol = subida_encosta_repeticoes(4, 0)
-        print(sol, ataques_rainhas(sol))
-    except:
-        pass
+    # try:
+    #     sol = subida_encosta_repeticoes(4, 0)
+    #     print(sol, ataques_rainhas(sol))
+    # except:
+    #     pass
 
-    # sol = feixe_local(
-    #     ProblemaRainhas([None]*8),
-    #     estados_gen(8, 8, 'r'))
-    # print(sol, ataques_rainhas(sol))
+    # sol = feixe_local(8, 4)
+    # print(sol, avaliacao(sol))
+    sol = busca_local_retrocesso(ProblemaSudoku(lerAquivo()))
+    print(printar_matriz(sol))
