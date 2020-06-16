@@ -268,15 +268,15 @@ def feixe_local(quantidade, k):
 def busca_local_retrocesso(s):
     estado = s
     estado_copia = estado
-    linha = 0
-    coluna = 0
 
-    pos_preenchida = posicao_preenchida(linha, coluna, estado)
-    print(pos_preenchida)
-    if pos_preenchida[2] == 0:
+    pos = posicao_preenchida(estado)
+    print(len(pos))
+
+    if pos[0] == 0 and len(pos) == 1:
         return True
-    linha = pos_preenchida[0]
-    coluna = pos_preenchida[1]
+
+    linha = pos[0]
+    coluna = pos[1]
 
     for i in range(1, 10):
         estado_copia[linha][coluna] = str(i)
@@ -288,20 +288,15 @@ def busca_local_retrocesso(s):
                 return estado
             
         estado_copia[linha][coluna] = " "
+        
     return False
 
-def posicao_preenchida(linha, coluna, matriz):
-    estado_pos = 0
+def posicao_preenchida(matriz):
     for i in range(9):
         for j in range(9):
             if matriz[i][j] == " ":
-                linha = i
-                coluna = j
-                estado_pos = 1
-                conjunto = [linha, coluna, estado_pos]
-                return conjunto
-    conjunto = [-1, -1, estado_pos]
-    return conjunto
+                return [i, j]
+    return [0]
 
 
 if __name__ == "__main__":
