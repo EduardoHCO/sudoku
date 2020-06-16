@@ -75,7 +75,7 @@ def escolher_jogador():
 
 
 if(int(questionador()) == 1):
-    f = open("nivel1.txt", "r")
+    f = open("nivel11.txt", "r")
     texto = f.readlines()
 elif(int(questionador()) == 2):
     f = open("nivel2.txt", "r")
@@ -133,8 +133,9 @@ def validar_linha(linha, estado):
     conflitos = 0
     for i in range(len(estado[linha])):
         for j in estado[linha][i+1:]:
-            if(estado[linha][i] == j):
-                conflitos += 1
+            if(estado[linha][i] != " "):
+                if(estado[linha][i] == j):
+                    conflitos += 1
     return conflitos
 
 
@@ -147,8 +148,9 @@ def validar_coluna(coluna, estado):
 
     for i in range(len(numeros_coluna)):
         for j in numeros_coluna[i+1:]:
-            if(numeros_coluna[i] == j):
-                conflitos += 1
+            if(numeros_coluna[i] != " "):
+                if(numeros_coluna[i] == j):
+                    conflitos += 1
     return conflitos
 
 
@@ -172,9 +174,10 @@ def validarDiagonais(matriz, i, j):
     contador = 0
     for k in range(3):
         for l in range(3):
-            if(k+auxi != i and l+auxj != j):
-                if matriz[i][j] == matriz[k+auxi][l+auxj]:
-                    contador += 1
+            if matriz[i][j] != " ":
+                if(k+auxi != i and l+auxj != j):
+                    if matriz[i][j] == matriz[k+auxi][l+auxj]:
+                        contador += 1
     return contador
 
 
@@ -262,24 +265,43 @@ def feixe_local(quantidade, k):
             return melhores_estados[0]
 
 
-def busca_local_retrocesso(problema):
-    estado = problema.inicial
-    aux = estado
-    # for i in range(9):
-    #     for j in range(9):
-    #         if estado[i][j] == " ":
-    #             for k in range(1, 10):
-    #                 aux[i][j] = k
-    #                 print(avaliacao(aux))
-    #                 if avaliacao(aux) != 0:
-    #                     aux[i][j] = " "
-    #                     busca_local_retrocesso(problema)
-    #                 else:
-    #                     pass
-    return estado
+def busca_local_retrocesso(s):
+    estado = s
+    estado_copia = estado
+    linha = 0
+    coluna = 0
 
-    if avaliacao(estado) != 0:
-        busca_local_retrocesso(estado)
+    pos_preenchida = posicao_preenchida(linha, coluna, estado)
+    print(pos_preenchida)
+    if pos_preenchida[2] == 0:
+        return True
+    linha = pos_preenchida[0]
+    coluna = pos_preenchida[1]
+
+    for i in range(1, 10):
+        estado_copia[linha][coluna] = str(i)
+        printar_matriz(estado_copia)
+
+        if(avaliacao(estado_copia) == 0):
+            estado[linha][coluna] = str(i)
+            if busca_local_retrocesso(estado):
+                return estado
+            
+        estado_copia[linha][coluna] = " "
+    return False
+
+def posicao_preenchida(linha, coluna, matriz):
+    estado_pos = 0
+    for i in range(9):
+        for j in range(9):
+            if matriz[i][j] == " ":
+                linha = i
+                coluna = j
+                estado_pos = 1
+                conjunto = [linha, coluna, estado_pos]
+                return conjunto
+    conjunto = [-1, -1, estado_pos]
+    return conjunto
 
 
 if __name__ == "__main__":
@@ -300,5 +322,7 @@ if __name__ == "__main__":
 
     # sol = feixe_local(8, 4)
     # print(sol, avaliacao(sol))
-    sol = busca_local_retrocesso(ProblemaSudoku(lerAquivo()))
+    problema = ProblemaSudoku(lerAquivo())
+    sol = busca_local_retrocesso(problema.inicial)
     print(printar_matriz(sol))
+    # print(sol)
