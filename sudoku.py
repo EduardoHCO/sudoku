@@ -28,9 +28,6 @@ class ProblemaSudoku():
 
         return s
 
-        # return [rainha + (0 if pos != id else mov)
-        #         for id, rainha in enumerate(s)]
-
     @staticmethod
     def objetivo(s):
         if avaliacao(s) == 0:
@@ -55,6 +52,21 @@ class ProblemaSudoku():
                     self.valores_fixos.append((i, j))
 
 
+def lerAquivo():
+    f = open("nivel1.txt", "r")
+    texto = f.readlines()
+    matriz = []
+    for i in range(len(texto)):
+        lista = []
+        listaAjuda = []
+        for c in range(len(texto)):
+            lista.append(texto[i][c])
+            listaAjuda.append(0)
+        # print(lista)
+        matriz.append(lista)
+    return matriz
+
+
 def questionador():
     print('Qual nível deseja jogar?')
     print('1 - Fácil')
@@ -72,33 +84,6 @@ def escolher_jogador():
     jogador = input()
 
     return jogador
-
-
-if(int(questionador()) == 1):
-    f = open("nivel11.txt", "r")
-    texto = f.readlines()
-elif(int(questionador()) == 2):
-    f = open("nivel2.txt", "r")
-    texto = f.readlines()
-elif(int(questionador()) == 3):
-    f = open("nivel3.txt", "r")
-    texto = f.readlines()
-else:
-    f = open("nivel1.txt", "r")
-    texto = f.readlines()
-
-
-def lerAquivo():
-    matriz = []
-    for i in range(len(texto)):
-        lista = []
-        listaAjuda = []
-        for c in range(len(texto)):
-            lista.append(texto[i][c])
-            listaAjuda.append(0)
-        # print(lista)
-        matriz.append(lista)
-    return matriz
 
 
 def printar_matriz(matriz):
@@ -218,12 +203,6 @@ def subida_encosta_repeticoes(quantidade, limite):
         if problema_sudoku.avaliacao(resultado) <= limite:
             return resultado
 
-    # for estado in estados:
-    #     problema.inicial = estado
-    #     resultado = subida_encosta(problema)
-    #     if problema.avaliacao(resultado) <= limite:
-    #         return resultado
-
     raise LimiteNaoAtingidoError()
 
 
@@ -286,10 +265,11 @@ def busca_local_retrocesso(s):
             estado[linha][coluna] = str(i)
             if busca_local_retrocesso(estado):
                 return estado
-            
+
         estado_copia[linha][coluna] = " "
-        
+
     return False
+
 
 def posicao_preenchida(matriz):
     for i in range(9):
@@ -300,24 +280,43 @@ def posicao_preenchida(matriz):
 
 
 if __name__ == "__main__":
+    print('Qual jogador deve jogar?')
+    print('1 - Humano')
+    print('2 - Solve Sudoku')
 
-    # problema_sudoku = ProblemaSudoku(lerAquivo())
-    # problema_sudoku.fixar_valores(problema_sudoku.inicial)
-    # problema_sudoku.inicial = preencher_matriz()
-    # sol = subida_encosta(problema_sudoku)
-    # print(printar_matriz(sol), problema_sudoku.avaliacao(sol))
+    entrada = input()
 
-    # Subida de encosta com reinicios, não deterministico por causa da função
-    # geradora de estados iniciais
-    # try:
-    #     sol = subida_encosta_repeticoes(4, 0)
-    #     print(sol, ataques_rainhas(sol))
-    # except:
-    #     pass
+    if int(entrada) == 1:
+        from gameSudoku import Sudoku_Humano
+        sudoku = Sudoku_Humano()
+        sudoku.run()
+    elif int(entrada) == 2:
 
-    # sol = feixe_local(8, 4)
-    # print(sol, avaliacao(sol))
-    problema = ProblemaSudoku(lerAquivo())
-    sol = busca_local_retrocesso(problema.inicial)
-    print(printar_matriz(sol))
-    # print(sol)
+        print('Qual algoritimo deve jogar?')
+        print('1 - Subida de encosta com reinicio')
+        print('2 - Feixe Local')
+        print('3 - Busca Local com retrocesso')
+        entrada = input()
+
+        if int(entrada) == 1:
+            # Subida de encosta com reinicios, não deterministico por causa da função
+            # geradora de estados iniciais
+            print('Quantidade de reinicios: ')
+
+            entrada = input()
+            try:
+                sol = subida_encosta_repeticoes(int(entrada), 0)
+                print(sol, ataques_rainhas(sol))
+            except:
+                print('Sem solução')
+        elif int(entrada) == 2:
+            print('Valor de k: ')
+
+            entrada = input()
+            sol = feixe_local(8, int(entrada))
+            print(sol, avaliacao(sol))
+        elif int(entrada) == 3:
+            problema = ProblemaSudoku(lerAquivo())
+            sol = busca_local_retrocesso(problema.inicial)
+            print(printar_matriz(sol))
+            # print(sol)
